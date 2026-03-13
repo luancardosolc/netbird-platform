@@ -17,5 +17,6 @@
 
 ## Remaining Hardening
 
-- Replace the bootstrap root-token workflow with a scoped OpenBao operator token for routine reads
+- Keep the current OpenBao token in place until a scoped replacement is created and validated end-to-end
+- Replace the bootstrap root-token workflow with a scoped OpenBao operator token for routine reads when that migration can be tested without breaking the working NetBird automation
 - Confirm VPN-only reachability before treating the system as production-ready

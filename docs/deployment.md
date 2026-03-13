@@ -23,4 +23,9 @@ The preferred source of truth for `make enroll-server` and `make enroll-macbook`
 - `OPENBAO_SKIP_VERIFY`
 - `OPENBAO_NETBIRD_SECRET_PATH` (optional, defaults to `kv/data/netbird/operational`)
 
+Current operational stance:
+
+- Keep the current working OpenBao token unchanged so the existing NetBird automation continues to work.
+- Treat a future read-only token scoped to `kv/netbird/operational` as an optional hardening step, not as an immediate requirement.
+
 The local `.state/netbird-admin.env` file is only a non-secret fallback placeholder and should not hold live credentials.
