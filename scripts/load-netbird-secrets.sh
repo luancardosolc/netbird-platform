@@ -3,12 +3,24 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 STATE_FILE="${ROOT_DIR}/.state/netbird-admin.env"
+KEYCHAIN_SERVICE="${OPENBAO_TOKEN_SERVICE_NAME:-openbao-netbird-read-token}"
+
+load_openbao_token_from_keychain() {
+  if ! command -v security >/dev/null 2>&1; then
+    return 1
+  fi
+
+  security find-generic-password -w -s "${KEYCHAIN_SERVICE}" 2>/dev/null
+}
 
 load_from_openbao() {
   local addr token path skip_verify response
 
   addr="${OPENBAO_ADDR:-}"
   token="${OPENBAO_TOKEN:-}"
+  if [[ -z "${token}" ]]; then
+    token="$(load_openbao_token_from_keychain || true)"
+  fi
   path="${OPENBAO_NETBIRD_SECRET_PATH:-kv/data/netbird/operational}"
   skip_verify="${OPENBAO_SKIP_VERIFY:-true}"
 
@@ -65,6 +77,8 @@ Preferred:
   export OPENBAO_ADDR="https://10.100.33.16:8200"
   export OPENBAO_TOKEN="..."
   export OPENBAO_SKIP_VERIFY=true
+  # or store the scoped token in the macOS Keychain service
+  # named "openbao-netbird-read-token"
 
 Fallback:
   create / update .state/netbird-admin.env with the required keys

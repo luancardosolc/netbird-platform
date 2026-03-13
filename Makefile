@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: bootstrap lint test validate deploy destroy enroll-server enroll-macbook
+.PHONY: bootstrap lint test validate deploy destroy enroll-server enroll-macbook store-openbao-netbird-token
 
 bootstrap:
 	./scripts/bootstrap.sh
@@ -30,3 +30,6 @@ enroll-server:
 
 enroll-macbook:
 	./scripts/enroll-macbook.sh
+
+store-openbao-netbird-token:
+	./scripts/store-openbao-netbird-token.sh

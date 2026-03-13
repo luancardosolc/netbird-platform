@@ -17,6 +17,8 @@ Automation-first project to extend the existing Hetzner VPS used by `openbao-pla
 
 - The platform reuses the existing Hetzner VPS from `openbao-platform`; it does not create a new server.
 - `make enroll-server` and `make enroll-macbook` prefer loading `NETBIRD_SETUP_KEY` and `NETBIRD_DOMAIN` from OpenBao via `OPENBAO_ADDR`, `OPENBAO_TOKEN`, and `OPENBAO_NETBIRD_SECRET_PATH`.
+- If `OPENBAO_TOKEN` is unset on macOS, the enrollment scripts also try the Keychain item `openbao-netbird-read-token`.
+- `make store-openbao-netbird-token` stores a scoped OpenBao read token in the macOS Keychain without changing the current working token flow.
 - The local `.state/netbird-admin.env` file is now only a fallback path and should not be treated as the primary secret store.
 - `make enroll-macbook` requires one-time local admin privileges on macOS to install and start the NetBird daemon.
 
