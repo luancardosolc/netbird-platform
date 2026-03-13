@@ -2,19 +2,13 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-STATE_FILE="${ROOT_DIR}/.state/netbird-admin.env"
 OPENBAO_STATE="${ROOT_DIR}/../openbao-platform/infra/tofu/terraform.tfstate"
 
-if [[ ! -f "${STATE_FILE}" ]]; then
-  echo "missing state file: ${STATE_FILE}" >&2
-  exit 1
-fi
-
-# shellcheck disable=SC1090
-source "${STATE_FILE}"
+# shellcheck disable=SC1091
+source "${ROOT_DIR}/scripts/load-netbird-secrets.sh"
 
 if [[ -z "${NETBIRD_SETUP_KEY:-}" || -z "${NETBIRD_DOMAIN:-}" ]]; then
-  echo "NETBIRD_SETUP_KEY and NETBIRD_DOMAIN must be present in ${STATE_FILE}" >&2
+  echo "NETBIRD_SETUP_KEY and NETBIRD_DOMAIN must be available from OpenBao or local fallback state" >&2
   exit 1
 fi
 

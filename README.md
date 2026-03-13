@@ -9,13 +9,15 @@ Automation-first project to extend the existing Hetzner VPS used by `openbao-pla
 3. Run `make lint`.
 4. Run `make test`.
 5. Run `make deploy`.
-6. Finish the initial dashboard setup and store the admin credentials plus setup key in `.state/netbird-admin.env`.
+6. Store the operational NetBird secret in OpenBao at `kv/netbird/operational`.
 7. Run `make enroll-server`.
 8. Run `make enroll-macbook`.
 
 ## Notes
 
 - The platform reuses the existing Hetzner VPS from `openbao-platform`; it does not create a new server.
+- `make enroll-server` and `make enroll-macbook` prefer loading `NETBIRD_SETUP_KEY` and `NETBIRD_DOMAIN` from OpenBao via `OPENBAO_ADDR`, `OPENBAO_TOKEN`, and `OPENBAO_NETBIRD_SECRET_PATH`.
+- The local `.state/netbird-admin.env` file is now only a fallback path and should not be treated as the primary secret store.
 - `make enroll-macbook` requires one-time local admin privileges on macOS to install and start the NetBird daemon.
 
 ## Docs

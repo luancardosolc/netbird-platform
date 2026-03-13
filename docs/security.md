@@ -6,9 +6,16 @@
 - Expose only the ports required by NetBird
 - Restrict OpenBao `8200/tcp` to VPN-originated traffic
 - Keep deployment automated and reproducible
+- Store NetBird operational secrets in OpenBao at `kv/netbird/operational`
+- Keep Trello and local state files free of plaintext credentials
 
-## Pending Hardening
+## Current State
 
-- Replace any bootstrap credentials with scoped operational credentials
-- Review NetBird dashboard admin credentials storage
+- The active setup key and dashboard admin password were migrated into OpenBao
+- The previous reusable setup key was revoked after rotation
+- Local plaintext fallback material was removed from the operator state file
+
+## Remaining Hardening
+
+- Replace the bootstrap root-token workflow with a scoped OpenBao operator token for routine reads
 - Confirm VPN-only reachability before treating the system as production-ready
