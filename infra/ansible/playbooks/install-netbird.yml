@@ -1,0 +1,94 @@
+---
+- name: Install NetBird on the existing Docker host
+  hosts: netbird
+  become: true
+  vars:
+    netbird_dir: /opt/netbird
+    netbird_domain: "{{ lookup('env', 'NETBIRD_DOMAIN') }}"
+    netbird_letsencrypt_email: >-
+      {{ lookup('env', 'NETBIRD_LETSENCRYPT_EMAIL') }}
+    netbird_turn_external_ip: >-
+      {{ lookup('env', 'NETBIRD_SERVER_IP') | default(ansible_host, true) }}
+    netbird_vpn_cidr: >-
+      {{ lookup('env', 'NETBIRD_SETUP_NETWORK_CIDR')
+         | default('10.100.0.0/16', true) }}
+    openbao_port: >-
+      {{ lookup('env', 'NETBIRD_OPENBAO_PORT') | default('8200', true) }}
+  tasks:
+    - name: Validate Docker availability
+      ansible.builtin.command: docker --version
+      changed_when: false
+
+    - name: Ensure supporting packages are installed
+      ansible.builtin.apt:
+        name:
+          - curl
+          - jq
+          - util-linux
+        state: present
+        update_cache: true
+
+    - name: Ensure NetBird working directory exists
+      ansible.builtin.file:
+        path: "{{ netbird_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Bootstrap NetBird with the official self-hosted script
+      ansible.builtin.shell: |
+        set -euo pipefail
+        cd "{{ netbird_dir }}"
+        export NETBIRD_DOMAIN="{{ netbird_domain }}"
+        export NETBIRD_LETSENCRYPT_EMAIL="{{ netbird_letsencrypt_email }}"
+        export NETBIRD_TURN_EXTERNAL_IP="{{ netbird_turn_external_ip }}"
+        export NETBIRD_DISABLE_ANONYMOUS_METRICS=true
+        export NETBIRD_MGMT_DNS_DOMAIN=netbird.mesh
+        script_url="https://raw.githubusercontent.com/netbirdio/netbird/main/"
+        script_url="${script_url}infrastructure_files/getting-started.sh"
+        curl -fsSL "${script_url}" -o ./getting-started.sh
+        chmod +x ./getting-started.sh
+        printf '0\n%s\nn\n' "{{ netbird_letsencrypt_email }}" \
+          | script -qec './getting-started.sh' /dev/null
+      args:
+        creates: "{{ netbird_dir }}/docker-compose.yml"
+        executable: /bin/bash
+
+    - name: Ensure NetBird stack is running
+      ansible.builtin.shell: |
+        set -euo pipefail
+        cd "{{ netbird_dir }}"
+        docker compose up -d
+      changed_when: false
+      args:
+        executable: /bin/bash
+
+    - name: Allow HTTP
+      community.general.ufw:
+        rule: allow
+        port: "80"
+        proto: tcp
+
+    - name: Allow HTTPS
+      community.general.ufw:
+        rule: allow
+        port: "443"
+        proto: tcp
+
+    - name: Allow TURN relay
+      community.general.ufw:
+        rule: allow
+        port: "3478"
+        proto: udp
+
+    - name: Remove public OpenBao access
+      community.general.ufw:
+        rule: deny
+        port: "{{ openbao_port }}"
+        proto: tcp
+
+    - name: Allow OpenBao from the VPN CIDR only
+      community.general.ufw:
+        rule: allow
+        port: "{{ openbao_port }}"
+        proto: tcp
+        src: "{{ netbird_vpn_cidr }}"

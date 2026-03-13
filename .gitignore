@@ -1,0 +1,5 @@
+.state/
+infra/tofu/.terraform/
+infra/tofu/inventory.ini
+infra/tofu/terraform.tfstate
+infra/tofu/terraform.tfstate.backup

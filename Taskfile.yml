@@ -1,0 +1,21 @@
+version: '3'
+
+tasks:
+  bootstrap:
+    cmds:
+      - ./scripts/bootstrap.sh
+  lint:
+    cmds:
+      - make lint
+  test:
+    cmds:
+      - make test
+  deploy:
+    cmds:
+      - ./scripts/deploy.sh
+  enroll-server:
+    cmds:
+      - ./scripts/enroll-server.sh
+  enroll-macbook:
+    cmds:
+      - ./scripts/enroll-macbook.sh
