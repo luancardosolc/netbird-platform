@@ -9,6 +9,7 @@
 - `make destroy`
 - `make enroll-server`
 - `make enroll-macbook`
+- `make store-openbao-netbird-token`
 
 ## Automation Principles
 
@@ -17,3 +18,4 @@
 - Scriptable client enrollment
 - CI validation on every change
 - OpenBao-backed secret retrieval for day-2 enrollment flows
+- macOS Keychain support for scoped OpenBao token storage

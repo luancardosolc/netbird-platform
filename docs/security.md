@@ -14,9 +14,11 @@
 - The active setup key and dashboard admin password were migrated into OpenBao
 - The previous reusable setup key was revoked after rotation
 - Local plaintext fallback material was removed from the operator state file
+- A dedicated OpenBao policy and scoped token were created for read-only access to `kv/netbird/operational`
+- The scoped token can be stored in the macOS Keychain instead of plaintext local files
 
 ## Remaining Hardening
 
-- Keep the current OpenBao token in place until a scoped replacement is created and validated end-to-end
-- Replace the bootstrap root-token workflow with a scoped OpenBao operator token for routine reads when that migration can be tested without breaking the working NetBird automation
+- Keep the current OpenBao token in place until the scoped replacement is adopted everywhere by operator choice
+- Replace the bootstrap root-token workflow with a broader scoped OpenBao operator token for additional day-2 tasks beyond NetBird secret reads
 - Confirm VPN-only reachability before treating the system as production-ready
