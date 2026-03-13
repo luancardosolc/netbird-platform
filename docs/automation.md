@@ -7,6 +7,8 @@
 - `make test`
 - `make deploy`
 - `make destroy`
+- `make enroll-server`
+- `make enroll-macbook`
 
 ## Automation Principles
 
@@ -14,3 +16,4 @@
 - Docker-based service deployment
 - Scriptable client enrollment
 - CI validation on every change
+- OpenBao-backed secret retrieval for day-2 enrollment flows
